@@ -33,7 +33,7 @@ export namespace Upload {
 // 登录模块
 export namespace Login {
   export interface ReqLoginForm {
-    username: string;
+    userName: string;
     password: string;
   }
   export interface ResLogin {
@@ -41,6 +41,15 @@ export namespace Login {
   }
   export interface ResAuthButtons {
     [key: string]: string[];
+  }
+
+  /**
+   * 获取验证码
+   */
+  export interface ResCaptcha {
+    key: string;
+    captcha: string;
+    expireTime: Date;
   }
 }
 

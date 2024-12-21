@@ -869,6 +869,20 @@
           }
         },
         {
+          "path": "/system/menuMange2",
+          "name": "menuMange2",
+          "component": "/system/menuMange/index2",
+          "meta": {
+            "icon": "Menu",
+            "title": "菜单管理2",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
           "path": "/system/departmentManage",
           "name": "departmentManage",
           "component": "/system/departmentManage/index",

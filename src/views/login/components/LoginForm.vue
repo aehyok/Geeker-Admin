@@ -1,7 +1,7 @@
 <template>
   <el-form ref="loginFormRef" :model="loginForm" :rules="loginRules" size="large">
-    <el-form-item prop="username">
-      <el-input v-model="loginForm.username" placeholder="用户名：admin / user">
+    <el-form-item prop="userName">
+      <el-input v-model="loginForm.userName" placeholder="用户名：admin / user">
         <template #prefix>
           <el-icon class="el-input__icon">
             <user />
@@ -17,6 +17,16 @@
           </el-icon>
         </template>
       </el-input>
+    </el-form-item>
+    <el-form-item class="smbot" prop="captcha">
+      <div class="form-row">
+        <el-input v-model="loginForm.captchaValue" placeholder="验证码" style="flex: 1" />
+
+        <div class="captcha-image">
+          <img :src="loginForm.captchaImage" />
+          <span style="margin-left: 20px; cursor: pointer" @click="getImageVerifyCode"> 换一张 </span>
+        </div>
+      </div>
     </el-form-item>
   </el-form>
   <div class="login-btn">
@@ -34,14 +44,14 @@ import { HOME_URL } from "@/config";
 // import { getTimeState } from "@/utils";
 import { Login } from "@/api/interface";
 import { ElNotification } from "element-plus";
-import { loginApi } from "@/api/modules/login";
+import { loginApi, captchaApi } from "@/api/modules/login";
 import { useUserStore } from "@/stores/modules/user";
 import { useTabsStore } from "@/stores/modules/tabs";
 import { useKeepAliveStore } from "@/stores/modules/keepAlive";
 import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
 import { CircleClose, UserFilled } from "@element-plus/icons-vue";
 import type { ElForm } from "element-plus";
-import md5 from "md5";
+// import md5 from "md5";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -51,15 +61,32 @@ const keepAliveStore = useKeepAliveStore();
 type FormInstance = InstanceType<typeof ElForm>;
 const loginFormRef = ref<FormInstance>();
 const loginRules = reactive({
-  username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+  userName: [{ required: true, message: "请输入用户名", trigger: "blur" }],
   password: [{ required: true, message: "请输入密码", trigger: "blur" }]
 });
 
 const loading = ref(false);
 const loginForm = reactive<Login.ReqLoginForm>({
-  username: "",
-  password: ""
+  userName: "admin",
+  password: "admin123456!",
+  captchaValue: "",
+  captchaImage: "",
+  captchaKey: ""
 });
+
+// 获取图片验证码
+const getImageVerifyCode = async () => {
+  const result: any = await captchaApi();
+  console.log(result, "result-login");
+  try {
+    if (result.code === 200) {
+      loginForm.captchaKey = result.data.key;
+      loginForm.captchaImage = result.data.captcha;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // login
 const login = (formEl: FormInstance | undefined) => {
@@ -69,8 +96,9 @@ const login = (formEl: FormInstance | undefined) => {
     loading.value = true;
     try {
       // 1.执行登录接口
-      const { data } = await loginApi({ ...loginForm, password: md5(loginForm.password) });
-      userStore.setToken(data.access_token);
+      const { data } = await loginApi({ ...loginForm, password: loginForm.password });
+      // const { data } = await loginApi({ ...loginForm, password: md5(loginForm.password) });
+      userStore.setToken(data.accessToken);
 
       // 2.添加动态路由
       await initDynamicRouter();
@@ -106,7 +134,11 @@ const resetForm = (formEl: FormInstance | undefined) => {
   formEl.resetFields();
 };
 
-onMounted(() => {
+onMounted(async () => {
+  await getImageVerifyCode();
+
+  await initDynamicRouter();
+
   // 监听 enter 事件（调用登录）
   document.onkeydown = (e: KeyboardEvent) => {
     if (e.code === "Enter" || e.code === "enter" || e.code === "NumpadEnter") {
@@ -122,5 +154,34 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="scss">
-@import "../index.scss";
+@import "../index";
+.smbot {
+  border: none;
+}
+.smbot :deep(.el-input__inner) {
+  height: 40px;
+  border-radius: 2px;
+
+  // border: 1px solid #9EA7B4;
+}
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 400;
+  color: #657180;
+}
+.captcha-image {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+  .svgbox {
+    position: relative;
+    top: 6px;
+  }
+  img {
+    height: 100%;
+  }
+}
 </style>
