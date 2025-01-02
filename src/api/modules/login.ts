@@ -9,7 +9,7 @@ import http from "@/api";
  */
 // 用户登录
 export const loginApi = (params: Login.ReqLoginForm) => {
-  return http.post(`/infra/api/token/login`, params);
+  return http.post(`/infra/api/basic/Token/password`, params);
   // return http.post<Login.ResLogin>(PORT1 + `/login`, params, { loading: false }); // 正常 post json 请求  ==>  application/json
   // return http.post<Login.ResLogin>(PORT1 + `/login`, params, { loading: false }); // 控制当前请求不显示 loading
   // return http.post<Login.ResLogin>(PORT1 + `/login`, {}, { params }); // post 请求携带 query 参数  ==>  ?username=admin&password=123456
@@ -22,7 +22,16 @@ export const loginApi = (params: Login.ReqLoginForm) => {
  * @returns
  */
 export const captchaApi = () => {
-  return http.get(`/infra/api/token/captcha`, {}, { loading: false });
+  return http.get(`/infra/api/basic/Token/captcha`, {}, { loading: false });
+};
+
+/**
+ * @name 获取验证码
+ * @returns
+ */
+export const menuApi = () => {
+  // return http.get(`/infra/api/basic/Token/captcha`, {}, { loading: false });
+  return http.get(`/infra/api/basic/Menu/tree/1?IncludeChilds=true`, {}, { loading: false });
 };
 
 // 获取菜单列表

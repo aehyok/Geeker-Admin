@@ -20,7 +20,7 @@
     </el-form-item>
     <el-form-item class="smbot" prop="captcha">
       <div class="form-row">
-        <el-input v-model="loginForm.captchaValue" placeholder="验证码" style="flex: 1" />
+        <el-input v-model="loginForm.captcha" placeholder="验证码" style="flex: 1" />
 
         <div class="captcha-image">
           <img :src="loginForm.captchaImage" />
@@ -67,9 +67,9 @@ const loginRules = reactive({
 
 const loading = ref(false);
 const loginForm = reactive<Login.ReqLoginForm>({
-  userName: "admin",
-  password: "admin123456!",
-  captchaValue: "",
+  userName: "root",
+  password: "Long2024!",
+  captcha: "",
   captchaImage: "",
   captchaKey: ""
 });
@@ -96,10 +96,9 @@ const login = (formEl: FormInstance | undefined) => {
     loading.value = true;
     try {
       // 1.执行登录接口
-      const { data } = await loginApi({ ...loginForm, password: loginForm.password });
+      const { data } = await loginApi({ ...loginForm, password: btoa(loginForm.password) });
       // const { data } = await loginApi({ ...loginForm, password: md5(loginForm.password) });
-      userStore.setToken(data.accessToken);
-
+      userStore.setToken(data.token);
       // 2.添加动态路由
       await initDynamicRouter();
 
@@ -175,7 +174,8 @@ onBeforeUnmount(() => {
 .captcha-image {
   display: flex;
   align-items: center;
-  margin-left: 10px;
+  height: 40px;
+  margin-left: 30px;
   .svgbox {
     position: relative;
     top: 6px;

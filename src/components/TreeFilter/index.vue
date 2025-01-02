@@ -61,7 +61,7 @@ interface TreeFilterProps {
 }
 const props = withDefaults(defineProps<TreeFilterProps>(), {
   id: "id",
-  label: "label",
+  label: "name",
   multiple: false
 });
 
@@ -158,5 +158,5 @@ defineExpose({ treeData, treeAllData, treeRef });
 </script>
 
 <style scoped lang="scss">
-@import "./index.scss";
+@import "./index";
 </style>

@@ -5,5 +5,5 @@ import http from "@/api";
  * @returns
  */
 export const getMenuTreeApi = (params: any) => {
-  return http.get(`/infra/api/menu/tree`, params, { loading: false });
+  return http.get(`/infra/api/basic/Menu/tree/1`, params, { loading: false });
 };
