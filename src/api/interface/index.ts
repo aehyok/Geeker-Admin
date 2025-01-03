@@ -53,6 +53,28 @@ export namespace Login {
   }
 }
 
+// 菜单管理模块
+export namespace Menu {
+  export interface ResMenuList {
+    id: string;
+    name: string;
+    url: string;
+    code: string;
+    icon: string;
+    iconType: number;
+    platformType: number;
+    order: number;
+    parentId: string;
+    type: number;
+    activeIcon: string;
+    activeIconType: number;
+    remark: string;
+    isVisible: boolean;
+    isExternalLink: boolean;
+    children?: ResMenuList[];
+  }
+}
+
 // 用户管理模块
 export namespace User {
   export interface ReqUserParams extends ReqPage {

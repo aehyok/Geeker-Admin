@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-mutating-props -->
 <template>
   <div class="card filter">
     <h4 v-if="title" class="title sle">
@@ -85,7 +86,8 @@ onBeforeMount(async () => {
   if (props.requestApi) {
     const { data } = await props.requestApi!();
     treeData.value = data;
-    treeAllData.value = [{ id: "", [props.label]: "全部" }, ...data];
+    // treeAllData.value = [{ id: "", [props.label]: "全部" }, ...data];
+    treeAllData.value = [...data];
   }
 });
 
@@ -101,7 +103,9 @@ watch(
   () => {
     if (props.data?.length) {
       treeData.value = props.data;
-      treeAllData.value = [{ id: "", [props.label]: "全部" }, ...props.data];
+      // treeAllData.value = [{ id: "", [props.label]: "全部" }, ...props.data];
+      treeAllData.value = [...props.data];
+      console.log(props.defaultValue, "selected.value");
     }
   },
   { deep: true, immediate: true }
@@ -145,6 +149,7 @@ const emit = defineEmits<{
 // 单选
 const handleNodeClick = (data: { [key: string]: any }) => {
   if (props.multiple) return;
+  console.log(data, "===handleNodeClick");
   emit("change", data[props.id]);
 };
 

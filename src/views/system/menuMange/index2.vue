@@ -4,7 +4,7 @@
       label="name"
       title="菜单列表(单选)"
       :data="treeData"
-      :default-value="initParam.departmentId"
+      :default-value="initParam.menuId"
       @change="changeTreeFilter"
     />
     <div class="table-box">
@@ -12,7 +12,6 @@
         ref="proTable"
         :columns="columns"
         :data="tableData"
-        :init-param="initTableParam"
         :pagination="pagination"
         :search-col="{ xs: 1, sm: 1, md: 2, lg: 3, xl: 3 }"
       >
@@ -20,15 +19,14 @@
         <template #tableHeader>
           <el-button type="primary" :icon="CirclePlus" @click="openDrawer('新增')">新增菜单</el-button>
           <el-button type="primary" :icon="Upload" plain @click="batchAdd">批量添加菜单</el-button>
-          <el-button type="primary" :icon="Download" plain @click="downloadFile">导出用户数据</el-button>
+          <el-button type="primary" :icon="Download" plain @click="downloadFile">导出菜单数据</el-button>
           <el-button type="primary" plain @click="toDetail">To 平级详情页面</el-button>
         </template>
         <!-- 表格操作 -->
         <template #operation="scope">
           <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
           <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
-          <el-button type="primary" link :icon="Refresh" @click="resetPass(scope.row)">重置密码</el-button>
-          <el-button type="primary" link :icon="Delete" @click="deleteAccount(scope.row)">删除</el-button>
+          <el-button type="primary" link :icon="Delete" @click="deleteClick(scope.row)">删除</el-button>
         </template>
       </ProTable>
       <MenuDrawer ref="drawerRef" />
@@ -38,7 +36,7 @@
 </template>
 <script setup lang="ts" name="useTreeFilter">
 import { ref, reactive, onMounted } from "vue";
-import { User } from "@/api/interface";
+import { Menu } from "@/api/interface";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useHandleData } from "@/hooks/useHandleData";
@@ -46,11 +44,12 @@ import { useDownload } from "@/hooks/useDownload";
 import ProTable from "@/components/ProTable/index.vue";
 import TreeFilter from "@/components/TreeFilter/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
-import MenuDrawer from "@/views/proTable/components/MenuDrawer.vue";
+import MenuDrawer from "./components/MenuDrawer.vue";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, Upload, View, Refresh } from "@element-plus/icons-vue";
+import { CirclePlus, Delete, EditPen, Download, Upload, View } from "@element-plus/icons-vue";
 import { getMenuTreeApi } from "@/api/modules/menu";
-import { deleteUser, editUser, addUser, resetUserPassWord, exportUserInfo, BatchAddUser } from "@/api/modules/user";
+import { deleteUser, exportUserInfo, BatchAddUser } from "@/api/modules/user";
+import { postMenuApi, putMenuApi } from "@/api/modules/menu";
 import { format } from "date-fns";
 
 const router = useRouter();
@@ -64,12 +63,12 @@ const toDetail = () => {
 const proTable = ref<ProTableInstance>();
 
 // 如果表格需要初始化请求参数，直接定义传给 ProTable(之后每次请求都会自动带上该参数，此参数更改之后也会一直带上，改变此参数会自动刷新表格数据)
-const initParam = reactive({ departmentId: "1" });
+const initParam = reactive({ menuId: "" });
 const pagination = ref(false);
 
 const initTableParam = reactive({
   IncludeChilds: false,
-  ParentId: ""
+  ParentId: initParam.menuId
 });
 const treeData = ref([]);
 
@@ -82,6 +81,10 @@ const getMenuTree = async () => {
   console.log(result, "result-menu");
   if (result.code === 200) {
     treeData.value = result.data;
+    initParam.menuId = (treeData.value[0] as any).id;
+    if (initParam.menuId) {
+      await getMenuList(initParam.menuId);
+    }
   }
 };
 
@@ -105,14 +108,14 @@ onMounted(async () => {
 const changeTreeFilter = async (val: string) => {
   ElMessage.success("请注意查看请求参数变化 🤔");
   proTable.value!.pageable.pageNum = 1;
-  initTableParam.ParentId = val;
+  initParam.menuId = val;
 
   console.log(val, "val--change");
   await getMenuList(val);
 };
 
 // 表格配置项
-const columns = reactive<ColumnProps<User.ResUserList>[]>([
+const columns = reactive<ColumnProps<Menu.ResMenuList>[]>([
   { type: "index", label: "#", width: 80 },
   { prop: "name", label: "菜单名称", width: 120, search: { el: "input" } },
   { prop: "url", label: "菜单url" },
@@ -149,15 +152,9 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "operation", label: "操作", width: 330, fixed: "right" }
 ]);
 
-// 删除用户信息
-const deleteAccount = async (params: User.ResUserList) => {
-  await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.username}】用户`);
-  proTable.value?.getTableList();
-};
-
-// 重置用户密码
-const resetPass = async (params: User.ResUserList) => {
-  await useHandleData(resetUserPassWord, { id: params.id }, `重置【${params.username}】用户密码`);
+// 删除
+const deleteClick = async (params: Menu.ResMenuList) => {
+  await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.name}】菜单`);
   proTable.value?.getTableList();
 };
 
@@ -181,13 +178,24 @@ const batchAdd = () => {
 };
 
 // 打开 drawer(新增、查看、编辑)
-const drawerRef = ref<InstanceType<typeof UserDrawer> | null>(null);
+const drawerRef = ref<InstanceType<typeof MenuDrawer> | null>(null);
+
+const convertTreeData = (list: any) => {
+  return list.map(item => ({
+    label: item.name,
+    value: item.id,
+    children: item.children ? convertTreeData(item.children) : null
+  }));
+};
+
 const openDrawer = (title: string, row: any = {}) => {
+  console.log(initTableParam.ParentId, "treeData.value----------");
   const params = {
     title,
     isView: title === "查看",
-    row: { ...row },
-    api: title === "新增" ? addUser : title === "编辑" ? editUser : undefined,
+    row: { ...row, parentId: initParam.menuId, platformType: 1 },
+    treeMenuList: convertTreeData(treeData.value),
+    api: title === "新增" ? postMenuApi : title === "编辑" ? putMenuApi : undefined,
     getTableList: proTable.value?.getTableList
   };
   drawerRef.value?.acceptParams(params);
