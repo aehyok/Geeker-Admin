@@ -32,7 +32,7 @@
         <el-tree-select
           v-model="drawerProps.row!.parentId"
           :data="drawerProps.treeMenuList"
-          check-strictly=true
+          :check-strictly="true"
           value-key="value"
           :default-expand-all="defaultExpand"
           :default-checked-keys="[drawerProps.row!.parentId]"

@@ -48,8 +48,8 @@ import MenuDrawer from "./components/MenuDrawer.vue";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, Download, Upload, View } from "@element-plus/icons-vue";
 import { getMenuTreeApi } from "@/api/modules/menu";
-import { deleteUser, exportUserInfo, BatchAddUser } from "@/api/modules/user";
-import { postMenuApi, putMenuApi } from "@/api/modules/menu";
+import { exportUserInfo, BatchAddUser } from "@/api/modules/user";
+import { deleteMenuApi, postMenuApi, putMenuApi } from "@/api/modules/menu";
 import { format } from "date-fns";
 
 const router = useRouter();
@@ -73,7 +73,12 @@ const initTableParam = reactive({
 const treeData = ref([]);
 
 const tableData = ref([]);
-const getMenuTree = async () => {
+
+/**
+ * 刚开始加载左侧树
+ * @param isInit 是否是初始化的时候加载
+ */
+const getMenuTree = async (isInit = false) => {
   const params = {
     IncludeChilds: true
   };
@@ -81,17 +86,20 @@ const getMenuTree = async () => {
   console.log(result, "result-menu");
   if (result.code === 200) {
     treeData.value = result.data;
-    initParam.menuId = (treeData.value[0] as any).id;
+    console.log(isInit, "isInit");
+    if (isInit) {
+      initParam.menuId = (treeData.value[0] as any).id;
+    }
     if (initParam.menuId) {
-      await getMenuList(initParam.menuId);
+      await getMenuList();
     }
   }
 };
 
-const getMenuList = async (menuId: any) => {
+const getMenuList = async () => {
   const params = {
     IncludeChilds: false,
-    ParentId: menuId
+    ParentId: initParam.menuId
   };
   const result: any = await getMenuTreeApi(params);
   console.log(result, "result-menu");
@@ -101,7 +109,7 @@ const getMenuList = async (menuId: any) => {
 };
 
 onMounted(async () => {
-  await getMenuTree();
+  await getMenuTree(true);
 });
 
 // 树形筛选切换
@@ -111,7 +119,7 @@ const changeTreeFilter = async (val: string) => {
   initParam.menuId = val;
 
   console.log(val, "val--change");
-  await getMenuList(val);
+  await getMenuList();
 };
 
 // 表格配置项
@@ -154,8 +162,10 @@ const columns = reactive<ColumnProps<Menu.ResMenuList>[]>([
 
 // 删除
 const deleteClick = async (params: Menu.ResMenuList) => {
-  await useHandleData(deleteUser, { id: [params.id] }, `删除【${params.name}】菜单`);
-  proTable.value?.getTableList();
+  console.log(params, "params------");
+  await useHandleData(deleteMenuApi, params.id, `删除【${params.name}】菜单`);
+  // proTable.value?.getTableList();
+  await getMenuTree(false);
 };
 
 // 导出用户列表
@@ -196,7 +206,7 @@ const openDrawer = (title: string, row: any = {}) => {
     row: { ...row, parentId: initParam.menuId, platformType: 1 },
     treeMenuList: convertTreeData(treeData.value),
     api: title === "新增" ? postMenuApi : title === "编辑" ? putMenuApi : undefined,
-    getTableList: proTable.value?.getTableList
+    getTableList: getMenuTree
   };
   drawerRef.value?.acceptParams(params);
 };

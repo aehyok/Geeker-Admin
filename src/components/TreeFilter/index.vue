@@ -77,8 +77,11 @@ const treeAllData = ref<{ [key: string]: any }[]>([]);
 
 const selected = ref();
 const setSelected = () => {
+  console.log("setSelected-----");
   if (props.multiple) selected.value = Array.isArray(props.defaultValue) ? props.defaultValue : [props.defaultValue];
   else selected.value = typeof props.defaultValue === "string" ? props.defaultValue : "";
+
+  console.log(selected.value, "setSelected-----");
 };
 
 onBeforeMount(async () => {
@@ -105,7 +108,8 @@ watch(
       treeData.value = props.data;
       // treeAllData.value = [{ id: "", [props.label]: "全部" }, ...props.data];
       treeAllData.value = [...props.data];
-      console.log(props.defaultValue, "selected.value");
+      console.log(props.defaultValue, "--------selected.value");
+      nextTick(() => setSelected());
     }
   },
   { deep: true, immediate: true }

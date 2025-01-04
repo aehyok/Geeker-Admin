@@ -12,8 +12,8 @@ export const postMenuApi = (data: any) => {
   return http.post(`/infra/api/basic/Menu`, data, { loading: false });
 };
 
-export const putMenuApi = (id: any, data: any) => {
-  return http.put(`/infra/api/basic/Menu/${id}`, data, { loading: false });
+export const putMenuApi = (data: any) => {
+  return http.put(`/infra/api/basic/Menu/${data.id}`, data, { loading: false });
 };
 
 export const deleteMenuApi = (id: any) => {
