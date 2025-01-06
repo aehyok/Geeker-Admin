@@ -36,7 +36,7 @@
   </div>
 </template>
 <script setup lang="ts" name="useTreeFilter">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, nextTick } from "vue";
 import { Menu } from "@/api/interface";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -93,9 +93,12 @@ const getMenuTree = async (isInit = false) => {
     if (isInit) {
       initParam.menuId = (treeData.value[0] as any).id;
     }
+    nextTick(() => {
+      treeFilterRef.value.treeRef.setCurrentKey(initParam.menuId);
+    });
     if (initParam.menuId) {
       await getMenuList();
-      treeFilterRef.value.treeRef.setCurrentKey(initParam.menuId);
+      // todo 放在此位置
     }
   }
 };
