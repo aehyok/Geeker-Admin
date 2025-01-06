@@ -2,6 +2,7 @@
   <div class="main-box">
     <TreeFilter
       label="name"
+      ref="treeFilterRef"
       title="菜单列表(单选)"
       :data="treeData"
       :default-value="initParam.menuId"
@@ -62,6 +63,7 @@ const toDetail = () => {
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
 
+const treeFilterRef = ref();
 // 如果表格需要初始化请求参数，直接定义传给 ProTable(之后每次请求都会自动带上该参数，此参数更改之后也会一直带上，改变此参数会自动刷新表格数据)
 const initParam = reactive({ menuId: "" });
 const pagination = ref(false);
@@ -79,6 +81,7 @@ const tableData = ref([]);
  * @param isInit 是否是初始化的时候加载
  */
 const getMenuTree = async (isInit = false) => {
+  console.log(treeFilterRef.value.treeRef, "treeFilterRef");
   const params = {
     IncludeChilds: true
   };
@@ -92,6 +95,7 @@ const getMenuTree = async (isInit = false) => {
     }
     if (initParam.menuId) {
       await getMenuList();
+      treeFilterRef.value.treeRef.setCurrentKey(initParam.menuId);
     }
   }
 };
