@@ -3,11 +3,11 @@
     <div class="main-left card">
       <div class="main-left-header">
         <h3 style="padding: 5px">字典目录</h3>
-        <el-button plain type="primary" @click="openGroupDrawer('新增')">新增目录</el-button>
+        <el-button plain type="primary" @click="openGroupDrawer('新增')">新增</el-button>
       </div>
       <div class="search-box">
         <el-input v-model.trim="state.input" placeholder="请输入分组关键字" class="input-with-select"> </el-input>
-        <el-button plain type="primary" @click="searchClick">查询</el-button>
+        <el-button type="primary" @click="searchClick">查询</el-button>
       </div>
       <el-table
         ref="groupTableRef"
@@ -70,8 +70,8 @@ import {
   putDictionaryItemApi
 } from "@/api/modules/dict";
 import ProTable from "@/components/ProTable/index.vue";
-import GroupDrawer from "./components/groupDrawer.vue";
-import ItemDrawer from "./components/itemDrawer.vue";
+import GroupDrawer from "./components/GroupDrawer.vue";
+import ItemDrawer from "./components/ItemDrawer.vue";
 
 const groupDrawerRef = ref(null);
 const itemDrawerRef = ref(null);
@@ -84,8 +84,8 @@ const openDrawer = (val: string, row: any = {}) => {
 //   console.log("downloadFile");
 // };
 
-const deleteClick = (val: string) => {
-  console.log(val);
+const deleteClick = async (parameter: any) => {
+  console.log(parameter);
 };
 
 // 表格配置项

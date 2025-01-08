@@ -2,8 +2,8 @@
   <!-- 分页组件 -->
   <el-pagination
     :background="true"
-    :current-page="pageable.pageNum"
-    :page-size="pageable.pageSize"
+    :current-page="pageable.page"
+    :page-size="pageable.limit"
     :page-sizes="[10, 25, 50, 100]"
     :total="pageable.total"
     :size="globalStore?.assemblySize ?? 'default'"
@@ -18,8 +18,8 @@ import { useGlobalStore } from "@/stores/modules/global";
 const globalStore = useGlobalStore();
 
 interface Pageable {
-  pageNum: number;
-  pageSize: number;
+  page: number;
+  limit: number;
   total: number;
 }
 

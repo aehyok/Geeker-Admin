@@ -185,10 +185,7 @@ onMounted(() => {
 const processTableData = computed(() => {
   if (!props.data) return tableData.value;
   if (!props.pagination) return props.data;
-  return props.data.slice(
-    (pageable.value.pageNum - 1) * pageable.value.pageSize,
-    pageable.value.pageSize * pageable.value.pageNum
-  );
+  return props.data.slice((pageable.value.page - 1) * pageable.value.page, pageable.value.limit * pageable.value.limit);
 });
 
 // 监听页面 initParam 改化，重新获取表格数据
