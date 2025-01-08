@@ -36,7 +36,6 @@
 <script setup lang="ts" name="MenuDrawer">
 import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
-import { Menu } from "@/api/interface";
 
 const rules = reactive({
   name: [{ required: true, message: "请输入名称" }],
@@ -46,7 +45,7 @@ const rules = reactive({
 interface DrawerProps {
   title: string;
   isView: boolean;
-  row: Partial<Menu.ResMenuList>;
+  row: Partial<any>;
   api?: (params: any) => Promise<any>;
   getTableList?: () => void;
 }
@@ -74,7 +73,6 @@ const handleSubmit = () => {
       await drawerProps.value.api!(drawerProps.value.row);
       ElMessage.success({ message: `${drawerProps.value.title}角色成功！` });
       drawerProps.value.getTableList!();
-      console.log(drawerProps.value, "drawerProps.value");
       drawerVisible.value = false;
     } catch (error) {
       console.log(error);

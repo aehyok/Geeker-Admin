@@ -59,7 +59,7 @@
 
 <script setup lang="ts" name="dictManage">
 import { reactive, ref, onMounted, nextTick } from "vue";
-import { ColumnProps } from "@/components/ProTable/interface";
+import { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
 import {
   getDictionaryGroupApi,
@@ -73,8 +73,8 @@ import ProTable from "@/components/ProTable/index.vue";
 import GroupDrawer from "./components/GroupDrawer.vue";
 import ItemDrawer from "./components/ItemDrawer.vue";
 
-const groupDrawerRef = ref(null);
-const itemDrawerRef = ref(null);
+const groupDrawerRef = ref<InstanceType<typeof GroupDrawer> | null>(null);
+const itemDrawerRef = ref<InstanceType<typeof ItemDrawer> | null>(null);
 
 const openDrawer = (val: string, row: any = {}) => {
   console.log(val, row);
@@ -92,7 +92,7 @@ const deleteClick = async (parameter: any) => {
 const columns = reactive<ColumnProps<any>[]>([
   { prop: "name", label: "字典分组" },
   { prop: "code", label: "编码", width: 80 },
-  { prop: "operation", label: "操作", width: 60, fixed: "right" }
+  { prop: "operation", label: "操作", width: 80, fixed: "right" }
 ]);
 
 // 表格配置项
@@ -108,7 +108,7 @@ const itemColumns = reactive<ColumnProps<any>[]>([
 ]);
 
 const pagination = ref(false);
-const groupTableRef = ref();
+const groupTableRef = ref<ProTableInstance>();
 const groupData = ref([]);
 const itemsData = ref([]);
 const groupId = ref();
@@ -161,9 +161,18 @@ const getDictionaryGroupList = async () => {
     groupData.value = result.data;
     nextTick(async () => {
       if (result.data.length > 0) {
-        const row = result.data[0];
-        groupTableRef.value.setCurrentRow(row);
-        groupId.value = row.id;
+        if (groupId.value) {
+          result.data.forEach(element => {
+            if (groupId.value == element.id) {
+              const row = element;
+              groupTableRef.value?.setCurrentRow(row);
+            }
+          });
+        } else {
+          const row = result.data[0];
+          groupTableRef.value?.setCurrentRow(row);
+          groupId.value = row.id;
+        }
         await getDictionaryItemList();
       }
     });
@@ -208,7 +217,7 @@ onMounted(async () => {
   overflow-y: hidden;
 }
 .main-left {
-  width: 320px;
+  width: 360px;
   border: 1px solid var(--el-border-color-light);
 }
 

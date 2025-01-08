@@ -34,9 +34,11 @@ import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
 import { getRoleListApi, postRoleApi, putRoleApi, deleteRoleApi } from "@/api/modules/role";
 import RoleDrawer from "./components/RoleDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
+import { ProTableInstance } from "@/components/ProTable/interface";
 
-const roleDrawerRef = ref(null);
-const proTableRef = ref(null);
+const roleDrawerRef = ref<InstanceType<typeof RoleDrawer> | null>(null);
+
+const proTableRef = ref<ProTableInstance>();
 const openDrawer = (title: string, row: any = {}) => {
   console.log(proTableRef.value, row);
   if (Object.keys(row).length === 0) {
@@ -69,7 +71,7 @@ const dataCallback = (data: any) => {
 const deleteClick = async (parameter: any) => {
   await useHandleData(deleteRoleApi, parameter.id, `删除【${parameter.name}】角色`);
   // proTable.value?.getTableList();
-  proTableRef.value.getTableList();
+  proTableRef.value?.getTableList();
 };
 const pagination = ref(true);
 // 表格配置项

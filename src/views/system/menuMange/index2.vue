@@ -19,9 +19,9 @@
         <!-- 表格 header 按钮 -->
         <template #tableHeader>
           <el-button type="primary" :icon="CirclePlus" @click="openDrawer('新增')">新增菜单</el-button>
-          <el-button type="primary" :icon="Upload" plain @click="batchAdd">批量添加菜单</el-button>
+          <!-- <el-button type="primary" :icon="Upload" plain @click="batchAdd">批量添加菜单</el-button>
           <el-button type="primary" :icon="Download" plain @click="downloadFile">导出菜单数据</el-button>
-          <el-button type="primary" plain @click="toDetail">To 平级详情页面</el-button>
+          <el-button type="primary" plain @click="toDetail">To 平级详情页面</el-button> -->
         </template>
         <!-- 表格操作 -->
         <template #operation="scope">
@@ -38,27 +38,26 @@
 <script setup lang="ts" name="useTreeFilter">
 import { ref, reactive, onMounted, nextTick } from "vue";
 import { Menu } from "@/api/interface";
-import { useRouter } from "vue-router";
-import { ElMessage, ElMessageBox } from "element-plus";
+// import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 import { useHandleData } from "@/hooks/useHandleData";
-import { useDownload } from "@/hooks/useDownload";
+// import { useDownload } from "@/hooks/useDownload";
 import ProTable from "@/components/ProTable/index.vue";
 import TreeFilter from "@/components/TreeFilter/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import MenuDrawer from "./components/MenuDrawer.vue";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
-import { CirclePlus, Delete, EditPen, Download, Upload, View } from "@element-plus/icons-vue";
+import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
 import { getMenuTreeApi } from "@/api/modules/menu";
-import { exportUserInfo, BatchAddUser } from "@/api/modules/user";
 import { deleteMenuApi, postMenuApi, putMenuApi } from "@/api/modules/menu";
 import { format } from "date-fns";
 
-const router = useRouter();
+// const router = useRouter();
 
 // 跳转详情页
-const toDetail = () => {
-  router.push(`/proTable/useTreeFilter/detail/123456?params=detail-page`);
-};
+// const toDetail = () => {
+//   router.push(`/proTable/useTreeFilter/detail/123456?params=detail-page`);
+// };
 
 // ProTable 实例
 const proTable = ref<ProTableInstance>();
@@ -122,7 +121,7 @@ onMounted(async () => {
 // 树形筛选切换
 const changeTreeFilter = async (val: string) => {
   ElMessage.success("请注意查看请求参数变化 🤔");
-  proTable.value!.pageable.pageNum = 1;
+  proTable.value!.pageable.page = 1;
   initParam.menuId = val;
 
   console.log(val, "val--change");
@@ -176,23 +175,23 @@ const deleteClick = async (params: Menu.ResMenuList) => {
 };
 
 // 导出用户列表
-const downloadFile = async () => {
-  ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() =>
-    useDownload(exportUserInfo, "用户列表", proTable.value?.searchParam)
-  );
-};
+// const downloadFile = async () => {
+//   ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() =>
+//     useDownload(exportUserInfo, "用户列表", proTable.value?.searchParam)
+//   );
+// };
 
 // 批量添加用户
 const dialogRef = ref<InstanceType<typeof ImportExcel> | null>(null);
-const batchAdd = () => {
-  const params = {
-    title: "用户",
-    tempApi: exportUserInfo,
-    importApi: BatchAddUser,
-    getTableList: proTable.value?.getTableList
-  };
-  dialogRef.value?.acceptParams(params);
-};
+// const batchAdd = () => {
+//   const params = {
+//     title: "用户",
+//     tempApi: exportUserInfo,
+//     importApi: BatchAddUser,
+//     getTableList: proTable.value?.getTableList
+//   };
+//   dialogRef.value?.acceptParams(params);
+// };
 
 // 打开 drawer(新增、查看、编辑)
 const drawerRef = ref<InstanceType<typeof MenuDrawer> | null>(null);

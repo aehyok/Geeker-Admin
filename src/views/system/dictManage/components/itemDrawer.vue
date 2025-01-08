@@ -47,7 +47,6 @@
 <script setup lang="ts" name="MenuDrawer">
 import { ref, reactive } from "vue";
 import { ElMessage, FormInstance } from "element-plus";
-import { Menu } from "@/api/interface";
 import { getDictionaryItemApi } from "@/api/modules/dict";
 import { convertTreeData } from "@/utils/convert";
 
@@ -69,7 +68,7 @@ interface DrawerProps {
   title: string;
   isView: boolean;
   dictionaryGroupId: string;
-  row: Partial<Menu.ResMenuList>;
+  row: Partial<any>;
   api?: (params: any) => Promise<any>;
   getTableList?: () => void;
 }
