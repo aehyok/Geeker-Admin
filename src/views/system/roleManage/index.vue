@@ -34,7 +34,7 @@ import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
 import { getRoleListApi, postRoleApi, putRoleApi, deleteRoleApi } from "@/api/modules/role";
 import RoleDrawer from "./components/RoleDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
-import { ProTableInstance } from "@/components/ProTable/interface";
+import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 
 const roleDrawerRef = ref<InstanceType<typeof RoleDrawer> | null>(null);
 
@@ -56,8 +56,7 @@ const openDrawer = (title: string, row: any = {}) => {
 
 const roleParameters = reactive({
   page: 1,
-  limit: 10,
-  keyword: ""
+  limit: 10
 });
 
 const dataCallback = (data: any) => {
@@ -75,8 +74,8 @@ const deleteClick = async (parameter: any) => {
 };
 const pagination = ref(true);
 // 表格配置项
-const columns = reactive([
-  { prop: "name", label: "角色名称" },
+const columns = reactive<ColumnProps<any>[]>([
+  { prop: "name", label: "角色名称", search: { el: "input", key: "keyword", props: { placeholder: "请输入关键字" } } },
   { prop: "code", label: "角色代码" },
   { prop: "remark", label: "角色描述" },
   {
