@@ -27,3 +27,7 @@ export const disableRoleApi = (data: any) => {
 export const deleteRoleApi = (id: any) => {
   return http.delete(`/infra/api/basic/Role/${id}`, {}, { Loading: false });
 };
+
+export const getRolePermissionApi = (params: any) => {
+  return http.get(`/infra/api/basic/Role/permission`, params, { loading: false });
+};

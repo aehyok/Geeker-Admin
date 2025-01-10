@@ -21,6 +21,7 @@
         <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
         <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteClick(scope.row)">删除</el-button>
+        <el-button type="primary" link :icon="Delete" @click="setPermissionClick(scope.row)">设置权限</el-button>
       </template>
     </ProTable>
     <RoleDrawer ref="roleDrawerRef" />
@@ -52,6 +53,10 @@ const openDrawer = (title: string, row: any = {}) => {
     getTableList: proTableRef.value?.getTableList
   };
   roleDrawerRef.value?.acceptParams(params);
+};
+
+const setPermissionClick = (scope: any) => {
+  console.log(scope);
 };
 
 const roleParameters = reactive({
@@ -86,7 +91,7 @@ const columns = reactive<ColumnProps<any>[]>([
     }
   },
   { prop: "order", label: "排序" },
-  { prop: "operation", label: "操作", fixed: "right" }
+  { prop: "operation", label: "操作", fixed: "right", width: 350 }
 ]);
 
 onMounted(async () => {
