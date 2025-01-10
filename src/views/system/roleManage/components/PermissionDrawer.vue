@@ -1,17 +1,19 @@
 <template>
-  <div class="add_role_container">
-    <div class="role_table">
-      <el-table
-        :data="data.permissionList"
-        style="width: 100%; margin-bottom: 20px"
-        row-key="menuId"
-        @expand-change="expandChange"
-        border
-      >
-        <el-table-column label="系统模块名称" #default="{ row }">
+  <el-drawer v-model="drawerVisible" :destroy-on-close="true" size="450px" :title="`编辑权限`" @open="openClick">
+    <el-table
+      :data="state.permissionList"
+      style="width: 100%; margin-bottom: 20px"
+      row-key="menuId"
+      @expand-change="expandChange"
+      border
+    >
+      <el-table-column label="系统模块名称">
+        <template #default="{ row }">
           <el-checkbox v-model="row.hasPermission" :label="row.menuName" size="large" @change="handleCheckAllChange(row)" />
-        </el-table-column>
-        <el-table-column prop="name" label="功能操作按钮" #default="{ row }">
+        </template>
+      </el-table-column>
+      <el-table-column prop="name" label="功能操作按钮">
+        <template #default="{ row }">
           <el-checkbox
             v-for="item in row.operations"
             v-model="item.hasPermission"
@@ -20,64 +22,60 @@
             :key="item.id"
             size="large"
           />
-        </el-table-column>
-      </el-table>
-      <div class="role_submit">
-        <el-button @click="cancel">取消</el-button>
-        <el-button type="primary" @click="reviseTable" :loading="data.loading">确定</el-button>
-      </div>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="role_submit">
+      <el-button @click="cancel">取消</el-button>
+      <el-button type="primary" @click="reviseTable" :loading="state.loading">确定</el-button>
     </div>
-  </div>
+  </el-drawer>
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive } from "vue";
+import { reactive, ref } from "vue";
 // import { ElMessage } from "element-plus";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { getRolePermissionApi } from "@/api/modules/role";
-const route = useRoute();
 const router = useRouter();
-const data = reactive({
-  timer: null,
-  loading: false,
-  instance: null,
-  tableData: [],
-  paramsData: [],
-  permissionList: [],
-  childrenTreeList: [],
-  options: [
-    {
-      dataPermissName: "本级",
-      dataPermissvalue: 1
-    },
-    {
-      dataPermissName: "本级及以下",
-      dataPermissvalue: 2
-    },
-    {
-      dataPermissName: "本级及上级",
-      dataPermissvalue: 3
-    },
-    {
-      dataPermissName: "全部",
-      dataPermissvalue: 0
-    }
-  ]
+
+interface DrawerProps {
+  roleId: string;
+}
+
+// const treeProps = reactive({
+//   checkStrictly: false
+// });
+
+// const defaultExpandAll = ref(true);
+const drawerVisible = ref(false);
+const drawerProps = ref<DrawerProps>({
+  roleId: ""
 });
 
-onMounted(async () => {
-  await getList();
+// 接收父组件传过来的参数
+const acceptParams = (params: DrawerProps) => {
+  console.log(params, "params----");
+  drawerProps.value = params;
+  drawerVisible.value = true;
+};
+
+const state = reactive({
+  loading: false,
+  tableData: [],
+  permissionList: [],
+  childrenTreeList: []
 });
 
 const convertTableList = (list, id) => {
   const tableData = JSON.parse(JSON.stringify(list));
-  data.childrenTreeList = [];
+  state.childrenTreeList = [];
   for (let i = 0; i < tableData.length; i++) {
     if (id === tableData[i].menuId) {
-      data.childrenTreeList = tableData[i]?.children;
+      state.childrenTreeList = tableData[i]?.children;
       break;
     }
-    if (data.childrenTreeList.length) {
+    if (state.childrenTreeList.length) {
       return;
     }
     if (tableData[i].children && tableData[i].children.length > 0) {
@@ -85,33 +83,40 @@ const convertTableList = (list, id) => {
     }
   }
 };
+
 const expandChange = (row: any) => {
-  convertTableList(data.tableData, row.menuId);
-  if (Array.isArray(data.childrenTreeList) && data.childrenTreeList.length) {
-    row.children = data.childrenTreeList;
+  console.log("expandChange");
+  convertTableList(state.tableData, row.menuId);
+  if (Array.isArray(state.childrenTreeList) && state.childrenTreeList.length) {
+    row.children = state.childrenTreeList;
   }
 };
+
 const getList = async () => {
-  data.tableData = [];
+  state.tableData = [];
   const params = {
-    roleId: route.query.id
+    roleId: drawerProps.value.roleId
   };
   const res: any = await getRolePermissionApi(params);
   if (res.code === 200) {
-    data.tableData = res.data;
-    data.permissionList = JSON.parse(JSON.stringify(res.data));
-    data.permissionList.forEach((item: any) => (item.children = [1]));
+    state.tableData = res.data;
+    state.permissionList = JSON.parse(JSON.stringify(res.data));
+    state.permissionList.forEach((item: any) => (item.children = [1]));
   }
+};
+
+const openClick = () => {
+  getList();
 };
 
 const cancel = () => {
   router.push({
-    name: "roleManage",
+    name: "roleManage"
   });
 };
 
 const reviseTable = async () => {
-  data.loading = true;
+  state.loading = true;
 };
 
 const setAllTableCheck = (list, status) => {
@@ -175,11 +180,15 @@ const handleCheckAllChange = (val: any) => {
     val.hasPermission = hasPermission;
     val.operations.forEach((res: any) => (res.hasPermission = hasPermission));
     // 改变 data.tableData 的值
-    setTableData(data.tableData, val);
+    setTableData(state.tableData, val);
   }
 
   console.log(val, "val");
 };
+
+defineExpose({
+  acceptParams
+});
 </script>
 
 <style lang="scss">

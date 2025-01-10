@@ -21,10 +21,11 @@
         <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
         <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
         <el-button type="primary" link :icon="Delete" @click="deleteClick(scope.row)">删除</el-button>
-        <el-button type="primary" link :icon="Delete" @click="setPermissionClick(scope.row)">设置权限</el-button>
+        <el-button type="primary" link :icon="Delete" @click="setPermissionDrawer(scope.row)">设置权限</el-button>
       </template>
     </ProTable>
     <RoleDrawer ref="roleDrawerRef" />
+    <PermissionDrawer ref="permissionDrawerRef" />
   </div>
 </template>
 
@@ -34,10 +35,12 @@ import { reactive, ref, onMounted } from "vue";
 import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
 import { getRoleListApi, postRoleApi, putRoleApi, deleteRoleApi } from "@/api/modules/role";
 import RoleDrawer from "./components/RoleDrawer.vue";
+import PermissionDrawer from "./components/PermissionDrawer.vue";
 import { useHandleData } from "@/hooks/useHandleData";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 
 const roleDrawerRef = ref<InstanceType<typeof RoleDrawer> | null>(null);
+const permissionDrawerRef = ref<InstanceType<typeof PermissionDrawer> | null>(null);
 
 const proTableRef = ref<ProTableInstance>();
 const openDrawer = (title: string, row: any = {}) => {
@@ -55,8 +58,12 @@ const openDrawer = (title: string, row: any = {}) => {
   roleDrawerRef.value?.acceptParams(params);
 };
 
-const setPermissionClick = (scope: any) => {
-  console.log(scope);
+const setPermissionDrawer = (row: any) => {
+  console.log(row);
+  const params = {
+    roleId: row.id
+  };
+  permissionDrawerRef.value?.acceptParams(params);
 };
 
 const roleParameters = reactive({

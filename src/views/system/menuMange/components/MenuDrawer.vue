@@ -54,6 +54,12 @@
           <el-option v-for="item in iconTypeList" :label="item.label" :value="item.value" :key="item.label" />
           <!-- <el-option label="图片" value="2" /> -->
         </el-select>
+      </el-form-item>     
+      <el-form-item label="菜单类型" prop="type">
+        <el-select v-model="drawerProps.row.type" placeholder="请选择菜单类型">
+          <el-option v-for="item in typeList" :label="item.label" :value="item.value" :key="item.label" />
+          <!-- <el-option label="图片" value="2" /> -->
+        </el-select>
       </el-form-item>
       <el-form-item label="图标" prop="icon" v-if="drawerProps.row!.iconType == 1">
         <el-input v-model="drawerProps.row!.icon" placeholder="请输入图标" clearable></el-input>
@@ -125,6 +131,12 @@ interface DrawerProps {
 const iconTypeList = ref([
   { label: "图标", value: 1 },
   { label: "图片", value: 2 }
+]);
+
+const typeList = ref([
+  { label: "目录", value: 2 },
+  { label: "菜单", value: 3 },
+  { label: "操作", value: 4 }
 ]);
 
 const drawerVisible = ref(false);
