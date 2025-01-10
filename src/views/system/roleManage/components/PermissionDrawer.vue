@@ -1,5 +1,5 @@
 <template>
-  <el-drawer v-model="drawerVisible" :destroy-on-close="true" size="450px" :title="`编辑权限`" @open="openClick">
+  <el-drawer v-model="drawerVisible" :destroy-on-close="true" size="650px" :title="`编辑权限`" @open="openClick">
     <el-table
       :data="state.permissionList"
       style="width: 100%; margin-bottom: 20px"
@@ -9,7 +9,7 @@
     >
       <el-table-column label="系统模块名称">
         <template #default="{ row }">
-          <el-checkbox v-model="row.hasPermission" :label="row.menuName" size="large" @change="handleCheckAllChange(row)" />
+          <el-checkbox v-model="row.hasPermission" :label="row.menuName" size="large" @change="handleCheckChange(row)" />
         </template>
       </el-table-column>
       <el-table-column prop="name" label="功能操作按钮">
@@ -18,7 +18,7 @@
             v-for="item in row.operations"
             v-model="item.hasPermission"
             :label="item.menuName"
-            @change="handleCheckAllChange(item)"
+            @change="handleCheckChange(item)"
             :key="item.id"
             size="large"
           />
@@ -26,26 +26,20 @@
       </el-table-column>
     </el-table>
     <div class="role_submit">
-      <el-button @click="cancel">取消</el-button>
-      <el-button type="primary" @click="reviseTable" :loading="state.loading">确定</el-button>
+      <el-button @click="cancelClick">取消</el-button>
+      <el-button type="primary" @click="submitPermissionClick" :loading="state.loading">确定</el-button>
     </div>
   </el-drawer>
 </template>
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-// import { ElMessage } from "element-plus";
-import { useRouter } from "vue-router";
-import { getRolePermissionApi } from "@/api/modules/role";
-const router = useRouter();
+import { getRolePermissionApi, postRolePermissionApi } from "@/api/modules/role";
+import { ElMessage } from "element-plus";
 
 interface DrawerProps {
   roleId: string;
 }
-
-// const treeProps = reactive({
-//   checkStrictly: false
-// });
 
 // const defaultExpandAll = ref(true);
 const drawerVisible = ref(false);
@@ -60,6 +54,7 @@ const acceptParams = (params: DrawerProps) => {
   drawerVisible.value = true;
 };
 
+const permissionMenuIds = ref<any[]>([]);
 const state = reactive({
   loading: false,
   tableData: [],
@@ -106,17 +101,52 @@ const getList = async () => {
 };
 
 const openClick = () => {
+  permissionMenuIds.value = [];
   getList();
 };
 
-const cancel = () => {
-  router.push({
-    name: "roleManage"
-  });
+const cancelClick = () => {
+  drawerVisible.value = false;
 };
 
-const reviseTable = async () => {
+const submitPermissionClick = async () => {
   state.loading = true;
+  console.log(state.permissionList, "state.permissionList");
+  state.permissionList.forEach((item: any) => {
+    convertPermissionMenuIds(item);
+  });
+  console.log(permissionMenuIds.value.length);
+  if (permissionMenuIds.value.length === 0) {
+    ElMessage.warning({ message: `请先勾选角色权限！` });
+    state.loading = false;
+    return;
+  }
+
+  const result: any = await postRolePermissionApi(drawerProps.value.roleId, permissionMenuIds.value);
+  if (result && result.code === 200) {
+    console.log(permissionMenuIds.value, "permissionMenuIds");
+    state.loading = false;
+    drawerVisible.value = false;
+    ElMessage.warning({ message: `角色权限保存成功！` });
+  }
+};
+
+const convertPermissionMenuIds = (item: any) => {
+  if (item.hasPermission) {
+    permissionMenuIds.value.push(item.menuId);
+  }
+
+  if (item.children && item.children.length > 0) {
+    item.children.forEach((child: any) => {
+      convertPermissionMenuIds(child);
+    });
+  }
+
+  if (item.operations && item.operations.length > 0) {
+    item.operations.forEach((operation: any) => {
+      convertPermissionMenuIds(operation);
+    });
+  }
 };
 
 const setAllTableCheck = (list, status) => {
@@ -162,7 +192,7 @@ const setTableData = (allItem, item) => {
   }
 };
 
-const handleCheckAllChange = (val: any) => {
+const handleCheckChange = (val: any) => {
   const { hasPermission } = val;
   // 如果 val.children[0] === 1 表示是选中的最头部 没有展开页面并且是最根的项， 找到是那一项， 赋值 hasPermission 为 hasPermission
   // if (val.children?.length === 1 && val.children[0] === 1) {
