@@ -92,7 +92,7 @@
         <el-switch v-model="drawerProps.row.isExternalLink" clearable />
       </el-form-item>
       <el-form-item label="备注" prop="remark">
-        <el-input v-model="drawerProps.row!.remark" placeholder="请输入备注" clearable></el-input>
+        <el-input v-model="drawerProps.row!.remark" type="textarea" :row="2" placeholder="请输入备注" clearable></el-input>
       </el-form-item>
     </el-form>
     <template #footer>
