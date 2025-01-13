@@ -19,3 +19,11 @@ export const putMenuApi = (data: any) => {
 export const deleteMenuApi = (id: any) => {
   return http.delete(`/infra/api/basic/Menu/${id}`, {}, { Loading: false });
 };
+
+export const getMenuResourcesApi = (id: any) => {
+  return http.get(`/infra/api/basic/Menu/${id}/Resources`, {}, { loading: false });
+};
+
+export const putMenuResourcesBindApi = (id: any, data: any) => {
+  return http.put(`/infra/api/basic/Menu/${id}/bind`, data, { loading: false });
+};

@@ -28,9 +28,11 @@
           <el-button type="primary" link :icon="View" @click="openDrawer('查看', scope.row)">查看</el-button>
           <el-button type="primary" link :icon="EditPen" @click="openDrawer('编辑', scope.row)">编辑</el-button>
           <el-button type="primary" link :icon="Delete" @click="deleteClick(scope.row)">删除</el-button>
+          <el-button type="primary" link :icon="Delete" @click="bindClick(scope.row)">绑定接口</el-button>
         </template>
       </ProTable>
       <MenuDrawer ref="drawerRef" />
+      <ResourceDrawer ref="resourceDrawerRef" />
       <ImportExcel ref="dialogRef" />
     </div>
   </div>
@@ -46,6 +48,7 @@ import ProTable from "@/components/ProTable/index.vue";
 import TreeFilter from "@/components/TreeFilter/index.vue";
 import ImportExcel from "@/components/ImportExcel/index.vue";
 import MenuDrawer from "./components/MenuDrawer.vue";
+import ResourceDrawer from "./components/ResourceDrawer.vue";
 import { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
 import { getMenuTreeApi } from "@/api/modules/menu";
@@ -174,6 +177,14 @@ const deleteClick = async (params: Menu.ResMenuList) => {
   await getMenuTree(false);
 };
 
+const bindClick = (row: any) => {
+  console.log("bindClick");
+  const params = {
+    menuId: row.id
+  };
+  resourceDrawerRef.value?.acceptParams(params);
+};
+
 // 导出用户列表
 // const downloadFile = async () => {
 //   ElMessageBox.confirm("确认导出用户数据?", "温馨提示", { type: "warning" }).then(() =>
@@ -195,6 +206,7 @@ const dialogRef = ref<InstanceType<typeof ImportExcel> | null>(null);
 
 // 打开 drawer(新增、查看、编辑)
 const drawerRef = ref<InstanceType<typeof MenuDrawer> | null>(null);
+const resourceDrawerRef = ref<InstanceType<typeof ResourceDrawer> | null>(null);
 
 const convertTreeData = (list: any) => {
   return list.map(item => ({
