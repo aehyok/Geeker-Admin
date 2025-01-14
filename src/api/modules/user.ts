@@ -10,8 +10,8 @@ export const postUserApi = (data: any) => {
   return http.post(`/infra/api/basic/User`, data, { loading: false });
 };
 
-export const putUserApi = (id: any, data: any) => {
-  return http.put(`/infra/api/basic/User/${id}`, data, { loading: false });
+export const putUserApi = (data: any) => {
+  return http.put(`/infra/api/basic/User/${data.id}`, data, { loading: false });
 };
 
 export const enableUserApi = (id: any) => {
