@@ -24,7 +24,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="roleManage">
+<script setup lang="ts" name="UserManage">
 import ProTable from "@/components/ProTable/index.vue";
 import { reactive, ref, onMounted } from "vue";
 import { CirclePlus, Delete, EditPen, View } from "@element-plus/icons-vue";
