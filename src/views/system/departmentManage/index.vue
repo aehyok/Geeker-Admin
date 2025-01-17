@@ -40,6 +40,11 @@ const state = reactive({
       label: "结束日期"
     },
     {
+      name: "endssDate",
+      type: "daterange",
+      label: "起始时间"
+    },
+    {
       name: "isValid",
       type: "switch",
       label: "是否有效"
