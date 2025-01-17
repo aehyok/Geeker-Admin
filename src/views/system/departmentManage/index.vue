@@ -36,7 +36,7 @@ const state = reactive({
     },
     {
       name: "endDate",
-      type: "date",
+      type: "datetime",
       label: "结束日期"
     },
     {
