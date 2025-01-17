@@ -24,11 +24,6 @@ const state = reactive({
       required: true
     },
     {
-      name: "count",
-      type: "number",
-      label: "浏览数量"
-    },
-    {
       name: "content",
       type: "textarea",
       label: "内容"

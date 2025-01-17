@@ -1,4 +1,4 @@
-import type { FormRules } from "element-plus";
+import type { FormItemRule, InputAutoSize } from "element-plus";
 
 declare module FormModule {
   /**
@@ -27,7 +27,9 @@ declare module FormModule {
   /**
    * Form 表单字段正则验证规则设置
    */
-  export type FormColumnRule = FormRules;
+  export type FormColumnRule = FormItemRule;
+
+  export type FormColumnAutoSize = InputAutoSize;
 
   /**
    * Form表单字段项设置
@@ -74,7 +76,7 @@ declare module FormModule {
     labelAlign?: any;
 
     // 整个是否禁用
-    disable?: boolean;
+    disabled?: boolean;
 
     // 脱敏字段
     desensitizationstartnum?: number;
@@ -85,17 +87,21 @@ declare module FormModule {
    * 文本框
    */
   export class FormTextColumn extends FormColumn {
-    // minlength?: number;
-
     /**
      * 字符串最大长度
      */
     maxlength?: number;
 
     /**
+     * 字符串最小长度
+     */
+    minlength?: number;
+
+    /**
      * 是否显示字符串长度限制
      */
     showwordlimit?: boolean;
+
     changefunction?: string;
 
     /**
@@ -127,12 +133,27 @@ declare module FormModule {
       this.size = "default";
     }
   }
-
   /**
    * 文本域
    */
   export class FormTextAreaColumn extends FormColumn {
     rows: number;
+    /**
+     * 字符串最大长度
+     */
+    maxlength?: number;
+
+    /**
+     * 字符串最小长度
+     */
+    minlength?: number;
+
+    /**
+     * 是否显示字符串长度限制
+     */
+    showwordlimit?: boolean;
+
+    autosize: FormColumnAutoSize;
   }
 
   export class FormNumberColumn extends FormColumn {
@@ -140,6 +161,11 @@ declare module FormModule {
      * 字符串最大长度
      */
     maxlength?: number;
+
+    /**
+     * 字符串最小长度
+     */
+    minlength?: number;
     /**
      * 是否显示字符串长度限制
      */
