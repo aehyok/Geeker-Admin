@@ -1,6 +1,13 @@
+<!-- eslint-disable vue/no-mutating-props -->
 <template>
   <el-col :span="formItemProps.column.columnSpan" style="margin-bottom: 8px">
-    <component :is="componentType + 'View'" />
+    <component
+      :is="componentType + 'View'"
+      v-model:data="formItemProps.formData[formItemProps.column.name]"
+      v-model:form-data="formItemProps.formData"
+      :column="column"
+      :column-span="columnSpan"
+    />
   </el-col>
 </template>
 <script lang="ts" setup name="ComponentView">

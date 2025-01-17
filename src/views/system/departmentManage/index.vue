@@ -15,44 +15,44 @@ const state = reactive({
     {
       name: "name",
       type: "text",
-      title: "栏目名称"
+      label: "栏目名称"
     },
     {
       name: "total",
       type: "number",
-      title: "栏目数量",
+      label: "栏目数量",
       required: true
     },
     {
       name: "count",
       type: "number",
-      title: "浏览数量"
+      label: "浏览数量"
     },
     {
       name: "content",
       type: "textarea",
-      title: "内容"
+      label: "内容"
     },
     {
       name: "startDate",
       type: "date",
-      title: "开始日期",
+      label: "开始日期",
       required: true
     },
     {
       name: "endDate",
       type: "date",
-      title: "结束日期"
+      label: "结束日期"
     },
     {
       name: "isValid",
       type: "switch",
-      title: "是否有效"
+      label: "是否有效"
     },
     {
       name: "isExpired",
       type: "switch",
-      title: "是否过期",
+      label: "是否过期",
       required: true
     }
   ]
