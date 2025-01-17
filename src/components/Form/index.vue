@@ -1,22 +1,17 @@
 <template>
   <el-row :gutter="20">
     <template v-for="item in formProps.columnList" :key="item.id">
-      <ComponentView v-if="isShow(item, formData)" />
+      <ComponentView :column-span="formProps.columnSpan" :column="item" :form-data="formData" v-if="isShow(item, formData)" />
     </template>
   </el-row>
 </template>
 <script lang="ts" setup>
-import { reactive } from "vue";
 import ComponentView from "./components/component-view.vue";
-const state = reactive({
-  list: []
-});
-console.log(state.list);
 
 interface FormProps {
   columnList: any;
   formData: any;
-  columnSpan: number;
+  columnSpan?: number;
 }
 
 const formProps = withDefaults(defineProps<FormProps>(), {
@@ -25,6 +20,7 @@ const formProps = withDefaults(defineProps<FormProps>(), {
   columnSpan: 4
 });
 
+console.log(formProps, "form-index");
 const isShow = (column: any, formData: any = {}) => {
   if (column && column.isshowexpression && typeof column.isshowexpression === "string") {
     let flag: boolean = false;
@@ -37,5 +33,6 @@ const isShow = (column: any, formData: any = {}) => {
 
     return flag;
   }
+  return true;
 };
 </script>

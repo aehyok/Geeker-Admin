@@ -18,6 +18,7 @@ const formItemProps = withDefaults(defineProps<FormItemProps>(), {
   columnSpan: 4
 });
 
+console.log(formItemProps, "formItemProps");
 const componentType = computed(() => {
   const type = formItemProps.column.type;
   if (formItemProps.column.type === "select") {

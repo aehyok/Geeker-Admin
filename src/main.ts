@@ -32,6 +32,7 @@ import I18n from "@/languages/index";
 import pinia from "@/stores";
 // errorHandler
 import errorHandler from "@/utils/errorHandler";
+import { autoComponentRegister } from "@/utils/auto-component-register";
 
 const app = createApp(App);
 
@@ -43,3 +44,4 @@ Object.keys(Icons).forEach(key => {
 });
 
 app.use(ElementPlus).use(directives).use(router).use(I18n).use(pinia).mount("#app");
+autoComponentRegister(app);
