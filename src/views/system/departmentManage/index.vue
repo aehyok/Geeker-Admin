@@ -54,6 +54,62 @@ const state = reactive({
       type: "switch",
       label: "是否过期",
       required: true
+    },
+    {
+      name: "radio1",
+      type: "radio",
+      label: "是否同意",
+      required: true,
+      dictionaryList: [
+        {
+          code: 1,
+          name: "是"
+        },
+        {
+          code: 2,
+          name: "否"
+        }
+      ]
+    },
+    {
+      name: "checkbox1",
+      type: "checkbox",
+      label: "check的选项",
+      required: true,
+      dictionaryList: [
+        {
+          code: 1,
+          name: "同意1"
+        },
+        {
+          code: 2,
+          name: "同意2"
+        },
+        {
+          code: 3,
+          name: "同意3"
+        }
+      ]
+    },
+    {
+      name: "select1",
+      type: "select",
+      label: "select同意的选项",
+      required: true,
+      dictionary: [
+        {
+          code: 1,
+          name: "同意1"
+        },
+        {
+          code: 2,
+          name: "同意2"
+        },
+        {
+          code: 3,
+          name: "同意3"
+        }
+      ]
     }
   ]
 });

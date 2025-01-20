@@ -2,7 +2,7 @@
 <template>
   <el-col :span="formItemProps.column.columnSpan" style="margin-bottom: 8px">
     <component
-      :is="componentType + 'View'"
+      :is="formItemProps.column.type + 'View'"
       v-model:data="formItemProps.formData[formItemProps.column.name]"
       v-model:form-data="formItemProps.formData"
       :column="column"
@@ -11,7 +11,7 @@
   </el-col>
 </template>
 <script lang="ts" setup name="ComponentView">
-import { computed } from "vue";
+// import { computed } from "vue";
 
 interface FormItemProps {
   column: any;
@@ -26,18 +26,18 @@ const formItemProps = withDefaults(defineProps<FormItemProps>(), {
 });
 
 console.log(formItemProps, "formItemProps");
-const componentType = computed(() => {
-  const type = formItemProps.column.type;
-  if (formItemProps.column.type === "select") {
-    switch (type) {
-      case 1:
-        return "radio";
-      case 2:
-        return "checkbox";
-      default:
-        return "select";
-    }
-  }
-  return type;
-});
+// const componentType = computed(() => {
+//   const type = formItemProps.column.type;
+//   if (formItemProps.column.type === "select") {
+//     switch (type) {
+//       case 1:
+//         return "radio";
+//       case 2:
+//         return "checkbox";
+//       default:
+//         return "select";
+//     }
+//   }
+//   return type;
+// });
 </script>
