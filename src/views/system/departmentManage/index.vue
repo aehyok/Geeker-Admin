@@ -110,6 +110,11 @@ const state = reactive({
           name: "同意3"
         }
       ]
+    },
+    {
+      name: "name",
+      type: "color",
+      label: "颜色"
     }
   ]
 });
